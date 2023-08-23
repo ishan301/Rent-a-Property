@@ -111,6 +111,7 @@ export default function Home() {
                 onChange={(date) => {
                   setDate(date);
                 }}
+                format="DD/MM/YYYY"
               />
             </LocalizationProvider>
             <div
