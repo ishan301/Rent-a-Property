@@ -57,7 +57,7 @@ export default function Home() {
             variant="outlined"
             onChange={(event) => {
               setQuery(event.target.value);
-              setData(search(properties, false));
+              setData(search(Data, false));
             }}
             InputProps={{
               startAdornment: (
