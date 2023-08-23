@@ -14,11 +14,13 @@ import Button from "@mui/material/Button";
 import { Typography } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import Property from "./components/Property";
+import dayjs, { Dayjs } from "dayjs";
 
 export default function Home() {
   const [priceRange, setPriceRange] = React.useState<number[]>([500, 7000]);
   const [location, setLocation] = React.useState<string | null>(null);
   const [propertyType, setPropertyType] = React.useState<string | null>(null);
+  const [date, setDate] = React.useState<Dayjs | null>(null);
   const changePrice = (event: Event, newValue: number | number[]) => {
     setPriceRange(newValue as number[]);
   };
@@ -36,8 +38,16 @@ export default function Home() {
           propertyType != null ? item.property_type == propertyType : true;
         const priceFilter =
           item.price <= priceRange[1] && item.price >= priceRange[0];
+        const dateFilter = date
+          ? date.isSame(dayjs(item.move_in_date)) ||
+            date.isBefore(dayjs(item.move_in_date))
+          : true;
         return (
-          searchFilter && locationFilter && propertyTypeFilter && priceFilter
+          searchFilter &&
+          locationFilter &&
+          propertyTypeFilter &&
+          priceFilter &&
+          dateFilter
         );
       } else return searchFilter;
     });
@@ -95,7 +105,13 @@ export default function Home() {
               )}
             />
             <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DatePicker label="Select Move-in Date" />
+              <DatePicker
+                label="Select Move-in Date"
+                value={date}
+                onChange={(date) => {
+                  setDate(date);
+                }}
+              />
             </LocalizationProvider>
             <div
               style={{
@@ -151,14 +167,20 @@ export default function Home() {
           </div>
         </div>
         <div style={{ padding: "2em" }}>
-          
-          {Data.length>0?<Grid container spacing={2}>
-            {Data.map((property: any) => (
-              <Grid item xs={4} key={property.id}>
-                <Property {...property} />
-              </Grid>
-            ))}
-          </Grid>:<h4 style={{textAlign:"center"}}> No matching results found. </h4>}
+          {Data.length > 0 ? (
+            <Grid container spacing={2}>
+              {Data.map((property: any) => (
+                <Grid item xs={4} key={property.id}>
+                  <Property {...property} />
+                </Grid>
+              ))}
+            </Grid>
+          ) : (
+            <h4 style={{ textAlign: "center" }}>
+              {" "}
+              No matching results found.{" "}
+            </h4>
+          )}
         </div>
       </div>
     </div>
