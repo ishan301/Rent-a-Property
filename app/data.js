@@ -135,4 +135,9 @@ export const propertyTypes = [
   { label: "Condo" },
   { label: "Cabin" },
   { label: "Penthouse" },
+  {label:"House"}, 
+  {label:"Townhouse"}, 
+  {label:"Loft"},
+  {label:"Cottage"},
+  {label:"Apartment"}
 ];
