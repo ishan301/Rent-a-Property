@@ -14,12 +14,37 @@ import Button from "@mui/material/Button";
 import { Typography } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import Property from "./components/Property";
+import { log } from "console";
 
 export default function Home() {
-  const [priceRange, setPriceRange] = React.useState<number[]>([500, 2500]);
+  const [priceRange, setPriceRange] = React.useState<number[]>([500, 7000]);
+  const [location, setLocation] = React.useState<string | null>(null);
+  const [propertyType, setPropertyType] = React.useState<string | null>(null);
   const changePrice = (event: Event, newValue: number | number[]) => {
     setPriceRange(newValue as number[]);
   };
+  const [query, setQuery] = React.useState("");
+  const search = (data: any, filter: boolean) => {
+    return data.filter((item: any) => {
+      const searchFilter =
+        item.title.toLowerCase().includes(query.toLowerCase()) ||
+        item.location.toLowerCase().includes(query.toLowerCase()) ||
+        item.property_type.toLowerCase().includes(query.toLowerCase());
+      if (filter) {
+        const locationFilter =
+          location != null ? item.location == location : true;
+        const propertyTypeFilter =
+          propertyType != null ? item.property_type == propertyType : true;
+        const priceFilter =
+          item.price <= priceRange[1] && item.price >= priceRange[0];
+        return (
+          searchFilter && locationFilter && propertyTypeFilter && priceFilter
+        );
+      } else return searchFilter;
+    });
+  };
+  const [Data, setData] = React.useState(search(properties, false));
+
   return (
     <div>
       <Navbar />
@@ -30,6 +55,10 @@ export default function Home() {
             id="name-search"
             placeholder="Seach Properties..."
             variant="outlined"
+            onChange={(event) => {
+              setQuery(event.target.value);
+              setData(search(properties, false));
+            }}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
@@ -59,6 +88,9 @@ export default function Home() {
               id="location-picker"
               options={locations}
               sx={{ width: 300 }}
+              onChange={(event, newValue) => {
+                newValue ? setLocation(newValue.label) : setLocation(null);
+              }}
               renderInput={(params) => (
                 <TextField {...params} label="Location" />
               )}
@@ -97,25 +129,37 @@ export default function Home() {
               id="property-type-picker"
               options={propertyTypes}
               sx={{ width: 300 }}
+              onChange={(event, newValue) => {
+                newValue
+                  ? setPropertyType(newValue.label)
+                  : setPropertyType(null);
+              }}
               renderInput={(params) => (
                 <TextField {...params} label="Property Type" />
               )}
             />
           </div>
           <div>
-            <Button variant="contained" size="large">
+            <Button
+              variant="contained"
+              size="large"
+              onClick={() => {
+                setData(search(properties, true));
+              }}
+            >
               Search
             </Button>
           </div>
         </div>
         <div style={{ padding: "2em" }}>
-          <Grid container spacing={2}>
-            {properties.map((property) => (
+          
+          {Data.length>0?<Grid container spacing={2}>
+            {Data.map((property: any) => (
               <Grid item xs={4} key={property.id}>
                 <Property {...property} />
               </Grid>
             ))}
-          </Grid>
+          </Grid>:<h4 style={{textAlign:"center"}}> No matching results found. </h4>}
         </div>
       </div>
     </div>
