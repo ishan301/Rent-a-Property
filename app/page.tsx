@@ -20,7 +20,7 @@ export default function Home() {
   const [priceRange, setPriceRange] = React.useState<number[]>([500, 7000]);
   const [location, setLocation] = React.useState<string | null>(null);
   const [propertyType, setPropertyType] = React.useState<string | null>(null);
-  const [date, setDate] = React.useState<Dayjs | null>(null);
+  const [date, setDate] = React.useState<Dayjs | null>(dayjs());
   const changePrice = (event: Event, newValue: number | number[]) => {
     setPriceRange(newValue as number[]);
   };
@@ -112,6 +112,7 @@ export default function Home() {
                   setDate(date);
                 }}
                 format="DD/MM/YYYY"
+                minDate={dayjs()}
               />
             </LocalizationProvider>
             <div
