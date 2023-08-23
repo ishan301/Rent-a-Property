@@ -14,7 +14,6 @@ import Button from "@mui/material/Button";
 import { Typography } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import Property from "./components/Property";
-import { log } from "console";
 
 export default function Home() {
   const [priceRange, setPriceRange] = React.useState<number[]>([500, 7000]);
